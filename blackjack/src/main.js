@@ -1,7 +1,5 @@
 import { Application, Assets, Sprite, Texture } from "pixi.js";
-import tapis from "/assets/CasinoPack/tapis.png";
-import fond from "/assets/CasinoPack/fond.jpg";
-import carte from "/assets/CasinoPack/PNG/Cards/BackgroundRed.png";
+
 import {
   loadAssets,
   getCard,
@@ -10,10 +8,6 @@ import {
   getBackCards,
 } from "./Manager/AssetsManager.js";
 import { CARDS } from "./Assets.js";
-const cartes = [
-  "/assets/CasinoPack/PNG/Cards/club_2.png",
-  "/assets/CasinoPack/PNG/Cards/club_3.png",
-];
 
 (async () => {
   await loadAssets();
