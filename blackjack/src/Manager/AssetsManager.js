@@ -1,9 +1,10 @@
-import { BACK_CARDS, CARDS, OUTLINED_CARDS, TABLE } from "../Assets.js";
+import { BACK_CARDS, CARDS, CHIPS, OUTLINED_CARDS, TABLE } from "../Assets.js";
 
 const assets = {
   cards: {},
   outlinedCards: {},
   backCards: {},
+  chips: {},
   table: {},
 };
 
@@ -41,6 +42,7 @@ export async function loadAssets() {
     loadGroup(CARDS, assets.cards, "CARD"),
     loadGroup(OUTLINED_CARDS, assets.outlinedCards, "OUTLINED"),
     loadGroup(BACK_CARDS, assets.backCards, "BACK"),
+    loadGroup(CHIPS, assets.chips, "CHIP"),
     loadGroup(TABLE, assets.table, "TABLE"),
   ]);
 
@@ -51,7 +53,12 @@ export async function loadAssets() {
 }
 
 export function getAsset(key) {
-  return flatAssets[key] || assets.cards[key] || assets.outlinedCards[key];
+  return (
+    flatAssets[key] ||
+    assets.cards[key] ||
+    assets.outlinedCards[key] ||
+    assets.chips[key]
+  );
 }
 
 export function getCard(key) {
@@ -64,6 +71,10 @@ export function getOutlinedCard(key) {
 
 export function getBackCards(key) {
   return assets.backCards[key];
+}
+
+export function getChip(key) {
+  return assets.chips[key];
 }
 
 export function getTable(key) {

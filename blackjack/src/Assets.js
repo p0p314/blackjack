@@ -112,6 +112,31 @@ export const BACK_CARDS = {
   RED: "assets/CasinoPack/PNG/cards/BackgroundRed.png",
 };
 
+export const CHIPS = {
+  BLACK: "assets/CasinoPack/PNG/Chips/chipBlack.png",
+  SIDE_BLACK: "assets/CasinoPack/PNG/Chips/sideChip_black.png",
+  BLUE: "assets/CasinoPack/PNG/Chips/chipBlue.png",
+  SIDE_BLUE: "assets/CasinoPack/PNG/Chips/sideChip_blue.png",
+  GREEN: "assets/CasinoPack/PNG/Chips/chipGreen.png",
+  SIDE_GREEN: "assets/CasinoPack/PNG/Chips/sideChip_green.png",
+  ORANGE: "assets/CasinoPack/PNG/Chips/chipOrange.png",
+  SIDE_ORANGE: "assets/CasinoPack/PNG/Chips/sideChip_orange.png",
+  PURPLE: "assets/CasinoPack/PNG/Chips/chipPurple.png",
+  SIDE_PURPLE: "assets/CasinoPack/PNG/Chips/sideChip_purple.png",
+  RED: "assets/CasinoPack/PNG/Chips/chipRed.png",
+  SIDE_RED: "assets/CasinoPack/PNG/Chips/sideChip_red.png",
+  WHITE: "assets/CasinoPack/PNG/Chips/chipWhite.png",
+  SIDE_WHITE: "assets/CasinoPack/PNG/Chips/sideChip_white.png",
+  YELLOW: "assets/CasinoPack/PNG/Chips/chipYellow.png",
+  SIDE_YELLOW: "assets/CasinoPack/PNG/Chips/sideChip_yellow.png",
+  DEALER: "assets/CasinoPack/PNG/Chips/chip_dealer.png",
+  SIDE_DEALER: "assets/CasinoPack/PNG/Chips/sideChip_dealer.png",
+  SMALL_BLIND: "assets/CasinoPack/PNG/Chips/chip_smallBlind.png",
+  SIDE_SMALL_BLIND: "assets/CasinoPack/PNG/Chips/sideChip_smallBlind.png",
+  BIG_BLIND: "assets/CasinoPack/PNG/Chips/chip_bigBlind.png",
+  SIDE_BIG_BLIND: "assets/CasinoPack/PNG/Chips/sideChip_bigBlind.png",
+};
+
 export const TABLE = {
   TAPIS: "assets/CasinoPack/tapis.png",
   FOND: "assets/CasinoPack/fond.jpg",
