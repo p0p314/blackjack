@@ -9,7 +9,6 @@ import {
 } from "./Manager/AssetsManager.js";
 import { CARDS } from "./Assets.js";
 
-
 (async () => {
   await loadAssets();
   // Create a new application
