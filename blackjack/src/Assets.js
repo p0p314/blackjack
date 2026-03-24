@@ -108,8 +108,8 @@ export const OUTLINED_CARDS = {
   SA: "assets/CasinoPack/PNG/cardsOutline/cardOutline_spadesA.png",
 };
 export const BACK_CARDS = {
-  BLACK: "assets/CasinoPack/PNG/Cards/BackgroundBlack.png",
-  RED: "assets/CasinoPack/PNG/Cards/BackgroundRed.png",
+  BLACK: "assets/CasinoPack/PNG/cards/BackgroundBlack.png",
+  RED: "assets/CasinoPack/PNG/cards/BackgroundRed.png",
 };
 
 export const TABLE = {
