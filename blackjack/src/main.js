@@ -59,7 +59,7 @@ resize();
     console.log("Carte clicked!");
     index = Math.floor(Math.random() * taille);
     carte.image = getCard(Object.keys(CARDS)[index]);
-    socket.emit("tirerCarte");
+    socket.emit("HIT", "p1");
   };
   sceneJeu.add(carte);
 
@@ -75,6 +75,7 @@ resize();
     console.log("Carte clicked!");
     index = Math.floor(Math.random() * taille);
     carte2.image = getCard(Object.keys(CARDS)[index]);
+    socket.emit("STAND", "p1");
   };
   sceneJeu.add(carte2);
 
