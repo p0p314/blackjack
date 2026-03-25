@@ -142,6 +142,34 @@ class SocketManager {
   onError(callback) {
     this.on(ServerEvents.ERROR, callback);
   }
+
+  joinLobby(playerId) {
+    this.emit(ClientEvents.JOIN_LOBBY, { playerId });
+  }
+
+  leaveLobby(playerId) {
+    this.emit(ClientEvents.LEAVE_LOBBY, { playerId });
+  }
+
+  startGame() {
+    this.emit(ClientEvents.START_GAME, {});
+  }
+
+  onLobbyUpdated(callback) {
+    this.on(ServerEvents.LOBBY_UPDATED, callback);
+  }
+
+  onPlayerJoined(callback) {
+    this.on(ServerEvents.PLAYER_JOINED, callback);
+  }
+
+  onPlayerLeft(callback) {
+    this.on(ServerEvents.PLAYER_LEFT, callback);
+  }
+
+  onGameStarting(callback) {
+    this.on(ServerEvents.GAME_STARTING, callback);
+  }
 }
 
 export default new SocketManager();

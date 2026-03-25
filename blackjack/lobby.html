@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/public/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+    rel="stylesheet"
+  />
+  <title>Blackjack - Lobby</title>
+  <style>
+    .main-container {
+      margin-top: 80px;
+      width: 100%;
+      height: calc(100vh - 80px);
+      display: flex;
+      padding: 0;
+    }
+
+    .lobby-sidebar {
+      flex: 0 0 280px;
+      background: rgba(13, 59, 13, 0.6);
+      padding: 30px;
+      border-right: 2px solid #00ff00;
+      overflow-y: auto;
+      box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .lobby-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .lobby-title {
+      font-size: 2.5em;
+      font-family: 'Bebas Neue', sans-serif;
+      text-align: center;
+      background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 40px;
+      letter-spacing: 2px;
+      font-weight: 700;
+    }
+
+    .players-section h3 {
+      font-size: 1.1em;
+      color: #00ff00;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #00ff00;
+      padding-bottom: 10px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .players-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .player-item {
+      background: rgba(0, 255, 0, 0.08);
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-left: 4px solid #00ff00;
+      border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .player-item:hover {
+      background: rgba(0, 255, 0, 0.15);
+      transform: translateX(5px);
+    }
+
+    .player-name {
+      font-weight: 600;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .player-status {
+      font-size: 0.75em;
+      color: #fff;
+      background: #00ff00;
+      color: #0d3b0d;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .table-display {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .table-info {
+      font-size: 1.2em;
+      margin-bottom: 20px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .player-count {
+      font-size: 1.8em;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn-start-game {
+      background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+      color: #0d3b0d;
+      padding: 15px 40px;
+      font-size: 1em;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+    }
+
+    .btn-start-game:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 255, 0, 0.5);
+    }
+
+    .btn-start-game:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-leave {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: #fff;
+      padding: 15px 40px;
+      font-size: 1em;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-leave:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(231, 76, 60, 0.5);
+    }
+
+    .waiting-message {
+      font-size: 1.1em;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 30px;
+      animation: pulse 2s infinite;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 0.8;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .empty-state {
+      color: rgba(255, 255, 255, 0.5);
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+      font-weight: 400;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      color: #fff;
+      font-weight: 600;
+      letter-spacing: 1px;
+      font-size: 14px;
+    }
+
+    .btn-start-game {
+      background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%) !important;
+      color: #0d3b0d !important;
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3) !important;
+    }
+
+    .btn-start-game:hover:not(:disabled) {
+      box-shadow: 0 6px 25px rgba(0, 255, 0, 0.5) !important;
+    }
+
+    .btn-start-game:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #startGameBtn {
+      background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+      color: #0d3b0d;
+      box-shadow: 0 4px 15px rgba(0, 255, 0, 0.3);
+    }
+
+    #startGameBtn:hover:not(:disabled) {
+      box-shadow: 0 6px 25px rgba(0, 255, 0, 0.5);
+    }
+
+    #startGameBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #leaveBtn {
+      background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+      color: #fff !important;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    #leaveBtn:hover {
+      color: #fff !important;
+      box-shadow: 0 6px 25px rgba(231, 76, 60, 0.5);
+    }
+
+    html, body {
+      overflow: hidden;
+    }
+
+    .main-container {
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .lobby-sidebar {
+      overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+      .main-container {
+        flex-direction: column;
+      }
+
+      .lobby-sidebar {
+        flex: 0 0 auto;
+        max-height: 150px;
+        overflow-x: auto;
+      }
+
+      .players-list {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .player-item {
+        margin-bottom: 0;
+        min-width: 150px;
+      }
+
+      .lobby-title {
+        font-size: 2em;
+      }
+
+      .action-buttons {
+        flex-wrap: wrap;
+      }
+
+      .btn-start-game,
+      .btn-leave {
+        padding: 12px 30px;
+        font-size: 0.9em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Top navigation bar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <h1 class="title">BLACKJACK</h1>
+    </div>
+    <div class="navbar-right">
+      <div class="user-info" id="userInfo">...</div>
+    </div>
+  </nav>
+
+  <!-- Notification globale -->
+  <div id="globalNotification" class="global-notification"></div>
+
+  <!-- Lobby Container -->
+  <div class="main-container">
+    <!-- Sidebar - Players List -->
+    <div class="lobby-sidebar">
+      <div class="players-section">
+        <h3>Joueurs en Attente</h3>
+        <ul class="players-list" id="playersList">
+          <li class="empty-state">En attente de joueurs...</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Main Area -->
+    <div class="lobby-main">
+      <div class="lobby-title">TABLE DE BLACKJACK</div>
+      
+      <div class="table-display">
+        <div class="table-info">Place a la table</div>
+        <div class="player-count" id="playerCount">0 / 4 joueurs</div>
+      </div>
+
+      <div class="waiting-message" id="waitingMessage">
+        En attente des autres joueurs...
+      </div>
+
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="startGameBtn" disabled>
+          LANCER LA PARTIE
+        </button>
+        <button class="btn btn-danger" id="leaveBtn">
+          QUITTER LE LOBBY
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/Lobby.js"></script>
+</body>
+</html>

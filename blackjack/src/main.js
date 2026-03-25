@@ -8,6 +8,7 @@ import { CARDS, CHIPS } from "./Assets.js";
 import ImageView from "./Manager/ImageView.js";
 import Scene from "./Scene.js";
 import { socket } from "./Socket.js";
+import BetModal from "./BetModal.js";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -91,6 +92,41 @@ resize();
       }
     }
   });
+
+  // Setup bet modal
+  BetModal.setOnDealCallback((betAmount) => {
+    console.log(`Mise placee: $${betAmount}`);
+    socket.emit('placeBet', { amount: betAmount });
+  });
+
+  // Fetch player data from API
+  try {
+    const response = await fetch('http://localhost:3000/api/me', {
+      credentials: 'include',
+    });
+    const data = await response.json();
+    
+    if (data.loggedIn && data.user) {
+      // Show bet modal with actual player data
+      BetModal.show({
+        name: data.user.pseudo,
+        money: data.user.bankroll_actuelle,
+      });
+    } else {
+      // Fallback if not logged in
+      BetModal.show({
+        name: 'Joueur',
+        money: 1000,
+      });
+    }
+  } catch (error) {
+    console.error('Erreur récupération données utilisateur:', error);
+    // Fallback on error
+    BetModal.show({
+      name: 'Joueur',
+      money: 1000,
+    });
+  }
 
   function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);

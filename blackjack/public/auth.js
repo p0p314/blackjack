@@ -207,3 +207,12 @@ registerForm.addEventListener("submit", async (e) => {
 
 attachLoginButtonEvent();
 checkAuth();
+
+// Play button handler
+const playBtn = document.getElementById("playBtn");
+if (playBtn) {
+  playBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.location.href = "./lobby.html";
+  });
+}
