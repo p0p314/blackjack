@@ -1,78 +1,111 @@
 import { Application, Assets, Sprite, Texture } from "pixi.js";
-
+import tapis from "/assets/CasinoPack/tapis.png";
+import fond from "/assets/CasinoPack/fond.jpg";
+import carte from "/assets/CasinoPack/PNG/Cards/BackgroundRed.png";
 import {
   loadAssets,
+  getAsset,
   getCard,
-  getOutlinedCard,
-  getTable,
-  getBackCards,
+  getChip,
 } from "./Manager/AssetsManager.js";
-import { CARDS } from "./Assets.js";
+import { CARDS, CHIPS } from "./Assets.js";
+import ImageView from "./Manager/ImageView.js";
+import Scene from "./Scene.js";
 
+const canvas = document.createElement("canvas");
+const ctx = canvas.getContext("2d");
+let sceneJeu = new Scene();
+let sceneFond = new Scene();
 
+document.body.appendChild(canvas);
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+window.addEventListener("resize", resize);
+resize();
 (async () => {
   await loadAssets();
-  // Create a new application
-  const app = new Application();
-
-  // Initialize the application
-  await app.init({ background: "#1099bb", resizeTo: window });
-  document.body.appendChild(app.canvas);
-
-  const sprite = new Sprite(getTable("FOND"));
-  console.log(sprite);
-  sprite.width = app.screen.width;
-  sprite.height = app.screen.height;
-  sprite.x = 0;
-  sprite.y = 0;
-
-  app.stage.addChild(sprite);
-
-  const tapisSprite = new Sprite(getTable("TAPIS"));
-  tapisSprite.width = app.screen.width;
-  tapisSprite.height = app.screen.height;
-
-  tapisSprite.x = 0;
-  tapisSprite.y = 0;
-
-  app.stage.addChild(tapisSprite);
-
-  // // On va donc chercher en cache le sprite correspondant à la carte que l'on veut afficher
-  // //const carteSprite = new Sprite(Assets.get(cartes[index]));
-  const carteSprite = new Sprite(getBackCards("BLACK"));
-  let carteAJouer = CARDS;
-  console.log(carteAJouer);
-
-  carteSprite.width = 100;
-  carteSprite.height = 150;
-  carteSprite.x = app.screen.width / 2.1 - carteSprite.width / 2;
-  carteSprite.y = app.screen.height / 1.5 - carteSprite.height / 2;
-  carteSprite.interactive = true;
 
   let index = 0;
-  let taille = Object.keys(carteAJouer).length;
-  carteSprite.on("pointerdown", () => {
+  let taille = Object.keys(CARDS).length;
+  const fond = new ImageView(
+    getAsset("FOND"),
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+  sceneFond.add(fond);
+
+  const tapis = new ImageView(
+    getAsset("TAPIS"),
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
+  sceneFond.add(tapis);
+
+  const carte = new ImageView(
+    getCard("D2"),
+    canvas.width / 2.1 - 50,
+    canvas.height / 1.5 - 75,
+    100,
+    150,
+  );
+
+  carte.onClick = () => {
     console.log("Carte clicked!");
     index = Math.floor(Math.random() * taille);
+    carte.image = getCard(Object.keys(CARDS)[index]);
+  };
+  sceneJeu.add(carte);
 
-    carteSprite.texture = getCard(Object.keys(carteAJouer)[index]);
-    carteSprite.interactive = false; // Désactive l'interaction après le clic
+  const carte2 = new ImageView(
+    getCard("D2"),
+    canvas.width / 2.1 + 100,
+    canvas.height / 1.5 - 75,
+    100,
+    150,
+  );
+
+  carte2.onClick = () => {
+    console.log("Carte clicked!");
+    index = Math.floor(Math.random() * taille);
+    carte2.image = getCard(Object.keys(CARDS)[index]);
+  };
+  sceneJeu.add(carte2);
+
+  Object.keys(CHIPS).forEach((key, idx) => {
+    if (idx < 14) {
+      if (idx % 2 === 0) {
+        const chip = new ImageView(
+          getChip(key),
+          50 + idx * 60,
+          canvas.height - 160,
+          110,
+          110,
+        );
+        sceneJeu.add(chip);
+      }
+    }
   });
-  app.stage.addChild(carteSprite);
 
-  const carteSprite2 = new Sprite(getBackCards("BLACK"));
-  carteSprite2.width = 100;
-  carteSprite2.height = 150;
-  carteSprite2.x = app.screen.width / 1.9 - carteSprite2.width / 2;
-  carteSprite2.y = app.screen.height / 1.5 - carteSprite2.height / 2;
-  carteSprite2.interactive = true;
-  app.stage.addChild(carteSprite2);
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    sceneFond.draw(ctx);
+    sceneJeu.draw(ctx);
+    requestAnimationFrame(render);
+  }
 
-  carteSprite2.on("pointerdown", () => {
-    console.log("Carte clicked!");
-    index = Math.floor(Math.random() * taille);
-
-    carteSprite2.texture = getCard(Object.keys(carteAJouer)[index]);
-    carteSprite2.interactive = false; // Désactive l'interaction après le clic
+  render();
+  canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    sceneJeu.handleClick(x, y);
   });
 })();

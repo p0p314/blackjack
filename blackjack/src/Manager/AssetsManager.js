@@ -1,29 +1,82 @@
-import { BACK_CARDS, CARDS, OUTLINED_CARDS, TABLE } from "../Assets";
-import { Assets } from "pixi.js";
+import { BACK_CARDS, CARDS, CHIPS, OUTLINED_CARDS, TABLE } from "../Assets.js";
 
-export async function loadAssets(loader) {
-  const AllAssets = [
-    ...Object.values(CARDS),
-    ...Object.values(OUTLINED_CARDS),
-    ...Object.values(TABLE),
-    ...Object.values(BACK_CARDS),
-  ];
+const assets = {
+  cards: {},
+  outlinedCards: {},
+  backCards: {},
+  chips: {},
+  table: {},
+};
 
-  await Assets.load(AllAssets);
-  console.log("Assets chargés");
+const flatAssets = {};
+let isLoaded = false;
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => resolve(img);
+    img.onerror = () =>
+      reject(new Error(`Impossible de charger l'image: ${src}`));
+    img.src = src;
+  });
 }
 
-export function getCard(cardKey) {
-  return Assets.get(CARDS[cardKey]);
+async function loadGroup(definitions, targetStore, flatKeyPrefix) {
+  const entries = Object.entries(definitions);
+
+  await Promise.all(
+    entries.map(async ([key, src]) => {
+      const image = await loadImage(src);
+
+      targetStore[key] = image;
+      flatAssets[`${flatKeyPrefix}_${key}`] = image;
+    }),
+  );
 }
 
-export function getOutlinedCard(cardKey) {
-  return Assets.get(OUTLINED_CARDS[cardKey]);
+export async function loadAssets() {
+  if (isLoaded) return;
+
+  await Promise.all([
+    loadGroup(CARDS, assets.cards, "CARD"),
+    loadGroup(OUTLINED_CARDS, assets.outlinedCards, "OUTLINED"),
+    loadGroup(BACK_CARDS, assets.backCards, "BACK"),
+    loadGroup(CHIPS, assets.chips, "CHIP"),
+    loadGroup(TABLE, assets.table, "TABLE"),
+  ]);
+
+  Object.assign(flatAssets, assets.table, assets.backCards);
+  flatAssets.CARD_BACK = assets.backCards.BLACK;
+
+  isLoaded = true;
 }
 
-export function getTable(assetKey) {
-  return Assets.get(TABLE[assetKey]);
+export function getAsset(key) {
+  return (
+    flatAssets[key] ||
+    assets.cards[key] ||
+    assets.outlinedCards[key] ||
+    assets.chips[key]
+  );
 }
-export function getBackCards(assetKey) {
-  return Assets.get(BACK_CARDS[assetKey]);
+
+export function getCard(key) {
+  return assets.cards[key];
+}
+
+export function getOutlinedCard(key) {
+  return assets.outlinedCards[key];
+}
+
+export function getBackCards(key) {
+  return assets.backCards[key];
+}
+
+export function getChip(key) {
+  return assets.chips[key];
+}
+
+export function getTable(key) {
+  return assets.table[key];
 }
