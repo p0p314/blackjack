@@ -96,7 +96,7 @@ async function checkAuth() {
       const statsBtn = document.getElementById("statsBtn");
       logoutBtn.addEventListener("click", logout);
       statsBtn.addEventListener("click", () => {
-        showMessage("Statistiques - Fonctionnalité à venir", false);
+        window.location.href = "/stats.html";
       });
     } else {
       authArea.innerHTML = `<button id="loginBtn" class="btn btn-primary">Se connecter</button>`;

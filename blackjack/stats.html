@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blackjack - Statistiques</title>
+  <link rel="stylesheet" href="/public/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-left">
+      <h1 class="title">♠ SIMPLE BLACKJACK ♠</h1>
+    </div>
+    <div class="navbar-right">
+      <a href="/home.html" class="btn btn-secondary">Accueil</a>
+      <button id="logoutBtn" class="logout-btn">Se déconnecter</button>
+    </div>
+  </nav>
+
+  <main class="stats-page">
+    <section class="stats-header">
+      <h2 id="statsTitle">Statistiques du joueur</h2>
+      <p id="statsSubtitle">Chargement...</p>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stats-card">
+        <h3>Total de parties</h3>
+        <p id="totalParties" class="stats-value">0</p>
+      </article>
+
+      <article class="stats-card">
+        <h3>Taux de victoires</h3>
+        <p id="tauxVictoires" class="stats-value">0%</p>
+      </article>
+
+      <article class="stats-card">
+        <h3>Taux de bust</h3>
+        <p id="tauxBust" class="stats-value">0%</p>
+      </article>
+
+      <article class="stats-card">
+        <h3>Tendance</h3>
+        <p id="tendance" class="stats-value">-</p>
+      </article>
+    </section>
+
+    <section class="stats-section">
+      <div class="stats-card large-card">
+        <h3>Évolution de la bankroll</h3>
+        <canvas id="bankrollChart"></canvas>
+      </div>
+    </section>
+
+    <section class="stats-section">
+      <div class="stats-card large-card">
+        <h3>Fréquence des actions</h3>
+        <div class="actions-grid">
+          <div class="action-row">
+            <span>Tirer</span>
+            <span id="tirerStats">0% (0)</span>
+          </div>
+          <div class="action-row">
+            <span>Rester</span>
+            <span id="resterStats">0% (0)</span>
+          </div>
+          <div class="action-row">
+            <span>Doubler</span>
+            <span id="doublerStats">0% (0)</span>
+          </div>
+          <div class="action-row">
+            <span>Partager</span>
+            <span id="partagerStats">0% (0)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./public/stast.js"></script>
+</body>
+</html>
