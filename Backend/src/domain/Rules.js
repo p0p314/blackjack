@@ -4,10 +4,9 @@ export function calculateHandValue(cards) {
   let aces = 0;
 
   for (const card of cards) {
-    // console.log(`Calculating value for card: ${card.value} of ${card.suit}`);
     if (card.suit === "A") {
       aces++;
-      total += 11;
+      total += card.value;
     } else if (["K", "Q", "J"].includes(card.rank)) {
       total += 10;
     } else {
@@ -19,7 +18,6 @@ export function calculateHandValue(cards) {
     total -= 10;
     aces--;
   }
-  // console.log(`Total hand value: ${total} (with ${aces} aces)`);
   return total;
 }
 

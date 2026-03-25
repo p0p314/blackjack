@@ -69,10 +69,10 @@ export default class Game {
       }
       result = {
         status: player.status,
-        score: score,
+        score: score ?? calculateHandValue(player.hand),
         card: card,
       };
-    }
+    } else card = {};
 
     result = {
       status: player.status,
@@ -91,6 +91,11 @@ export default class Game {
     }
   }
 
+  applyAsValue(playerId, cardAlias, value) {
+    const player = this.players.find((p) => p.id === playerId);
+    player.applyAsValue(cardAlias, value);
+  }
+
   dealerPlay() {
     if (this.players.every((player) => player.status !== "playing")) {
       this.dealer.changeStatus("stood");
@@ -99,6 +104,10 @@ export default class Game {
 
     while (shouldDealerHit(this.dealer.hand)) {
       const card = this.deck.draw();
+      if (card.isAs() && calculateHandValue(this.dealer.hand) > 10) {
+        card.value = 1;
+      }
+
       this.dealer.addCard(card);
       if (isBust(this.dealer.hand)) {
         this.dealer.changeStatus("bust");

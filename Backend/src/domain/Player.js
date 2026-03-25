@@ -2,7 +2,7 @@ export default class Player {
   constructor(id, name) {
     this.id = id;
     this.name = name;
-    this.status = "playing"; // playing, stood, busted
+    this.status = "playing";
     this.hand = [];
   }
 
@@ -11,6 +11,11 @@ export default class Player {
       card.reveal();
     }
     this.hand.push(card);
+  }
+
+  applyAsValue(cardAlias, value) {
+    let card = this.hand.find((card) => card.alias == cardAlias);
+    card.value = value;
   }
 
   changeStatus(status) {

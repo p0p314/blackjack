@@ -13,45 +13,54 @@ export default function initSocket(io, game) {
     socket.on("HIT", (playerId) => {
       let result = game.playerHit(playerId);
 
-      if (result.status === "bust") {
-        socket.emit("PLAYER_BUST", result);
-      } else if (result.status === "blackjack") {
-        socket.emit("PLAYER_BLACKJACK", result);
-      } else if (result.status === "stood") {
-        socket.emit("PLAYER_STOOD", result);
-      } else socket.emit("CARD_RECEIVED", result);
-
-      console.log(`Le joueur ${playerId} a tiré une carte`, result);
-
-      if (game.dealerCanPlay()) {
-        const result = game.dealerPlay();
+      if (result.card.isAs()) {
+        console.log("Le joueur doit choisir la valeur de l'as");
+        socket.emit("SELECT_AS_VALUE", result);
+      } else {
         if (result.status === "bust") {
-          console.log("Le dealer a busté");
-          socket.emit("DEALER_BUST", result);
+          socket.emit("PLAYER_BUST", result);
+        } else if (result.status === "blackjack") {
+          socket.emit("PLAYER_BLACKJACK", result);
         } else if (result.status === "stood") {
-          console.log("Le dealer a stand");
-          socket.emit("DEALER_STOOD", result);
+          socket.emit("PLAYER_STOOD", result);
+        } else socket.emit("CARD_RECEIVED", result);
+
+        console.log(`Le joueur ${playerId} a tiré une carte`, result);
+
+        if (game.dealerCanPlay()) {
+          const result = game.dealerPlay();
+          if (result.status === "bust") {
+            console.log("Le dealer a busté");
+            socket.emit("DEALER_BUST", result);
+          } else if (result.status === "stood") {
+            console.log("Le dealer a stand");
+            socket.emit("DEALER_STOOD", result);
+          }
+        }
+
+        let resultGame = game.calulateResults();
+
+        if (resultGame != null) {
+          console.log("Envoyer les résultats de la partie au client");
+          if (resultGame.some((player) => player.status === "win")) {
+            console.log("Envoyer le résultat de win au client");
+            socket.emit("PLAYER_WIN", resultGame);
+          }
+          if (resultGame.some((player) => player.status === "lost")) {
+            console.log("Envoyer le résultat de lose au client");
+            socket.emit("PLAYER_LOST", resultGame);
+          }
+
+          if (resultGame.some((player) => player.status === "draw")) {
+            console.log("Envoyer le résultat de draw au client");
+            socket.emit("PLAYER_DRAW", resultGame);
+          }
         }
       }
+    });
 
-      let resultGame = game.calulateResults();
-
-      if (resultGame != null) {
-        console.log("Envoyer les résultats de la partie au client");
-        if (resultGame.some((player) => player.status === "win")) {
-          console.log("Envoyer le résultat de win au client");
-          socket.emit("PLAYER_WIN", resultGame);
-        }
-        if (resultGame.some((player) => player.status === "lost")) {
-          console.log("Envoyer le résultat de lose au client");
-          socket.emit("PLAYER_LOST", resultGame);
-        }
-
-        if (resultGame.some((player) => player.status === "draw")) {
-          console.log("Envoyer le résultat de draw au client");
-          socket.emit("PLAYER_DRAW", resultGame);
-        }
-      }
+    socket.on("APPLY_AS_VALUE", (playerId, cardAlias, value) => {
+      game.applyAsValue(playerId, cardAlias, value);
     });
 
     socket.on("STAND", (playerId) => {
