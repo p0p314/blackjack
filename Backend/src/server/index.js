@@ -4,6 +4,8 @@ import cors from "cors";
 import http from "http";
 import { Server } from "socket.io";
 import Card from "../domain/Card.js";
+import initSocket from "./socket.js";
+import Game from "../domain/Game.js";
 dotenv.config();
 
 const app = express();
@@ -20,24 +22,14 @@ app.get("/", (req, res) => {
 });
 
 const server = http.createServer(app);
-
-// ✅ brancher socket dessus
 const io = new Server(server, {
   cors: {
     origin: "*",
   },
 });
-io.on("connect", (socket) => {
-  // console.log(socket);
-  console.log("Un joueur connecté");
-  socket.emit("connected");
-  const card = new Card("D", "2");
 
-  socket.on("tirerCarte", () => {
-    console.log("Le joueur a tiré une carte", { card: card.toString() });
-    socket.emit("carteRecue", { rank: "10", suit: "hearts" });
-  });
-});
+const game = new Game();
+initSocket(io, game); // Passer une instance de jeu si nécessaire
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
