@@ -3,9 +3,14 @@ export default class Card {
     this.suit = suit;
     this.rank = rank;
     this.value =
-      value ?? (["K", "Q", "J"].includes(rank) ? 10 : parseInt(rank));
+      value ??
+      (["K", "Q", "J"].includes(rank)
+        ? 10
+        : ["A"].includes(rank)
+          ? 11
+          : parseInt(rank));
     this.alias = `${suit[0]}${rank}`;
-    this.isReveaed = false;
+    this.isRevealed = false;
   }
 
   reveal() {
