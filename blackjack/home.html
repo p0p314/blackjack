@@ -1,55 +1,68 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
-    <title>Accueil</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/public/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
+    rel="stylesheet"
+  />
+  <title>Accueil</title>
 </head>
 <body>
-     <h1>SIMPLE BLACK JACK</h1>
-     <a href="./index.html" class="play">Jouer</a>
-     <a href="#" id="loginBtn" class="connect">Se connecter</a>
+  <h1>SIMPLE BLACK JACK</h1>
+  <a href="./index.html" class="play">Jouer</a>
 
-     <!-- POPUP -->
-    <div id="popupLogin" class="popup">
-        <div class="popup-content">
-            <span class="close">&times;</span>
-            <h2>Se connecter</h2>
+  <div id="authArea">
+    <a href="#" id="loginBtn" class="connect">Se connecter</a>
+  </div>
 
-            <form><label for="text">Identifiant :</label>
-                <input type="text" required>
+  <div id="popupLogin" class="popup">
+    <div class="popup-content">
+      <span class="close">&times;</span>
 
-                <label for="password">Mot de passe :</label>
-                <input type="password" required>
+      <div class="tabs">
+        <button type="button" id="showLoginTab" class="tab-btn active-tab">
+          Connexion
+        </button>
+        <button type="button" id="showRegisterTab" class="tab-btn">
+          Créer un compte
+        </button>
+      </div>
 
-                <button type="submit">Se connecter</button>
-            </form>
-        </div>
+      <div id="messageBox" class="message-box"></div>
+
+      <div id="loginFormContainer">
+        <h2>Se connecter</h2>
+        <form id="loginForm">
+          <label for="loginPseudo">Identifiant :</label>
+          <input type="text" id="loginPseudo" name="pseudo" required />
+
+          <label for="loginPassword">Mot de passe :</label>
+          <input type="password" id="loginPassword" name="password" required />
+
+          <button type="submit">Se connecter</button>
+        </form>
+      </div>
+
+      <div id="registerFormContainer" style="display: none;">
+        <h2>Créer un compte</h2>
+        <form id="registerForm">
+          <label for="registerPseudo">Identifiant :</label>
+          <input type="text" id="registerPseudo" name="pseudo" required />
+
+          <label for="registerPassword">Mot de passe :</label>
+          <input type="password" id="registerPassword" name="password" required />
+
+          <button type="submit">Créer le compte</button>
+        </form>
+      </div>
     </div>
+  </div>
 
-    <!-- JS Pour gérer la Pop-up -->
-    <script> 
-        const modal = document.getElementById("popupLogin");
-        const btn = document.getElementById("loginBtn");
-        const close = document.querySelector(".close");
-
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        close.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
+  <script src="./public/auth.js"></script>
 </body>
 </html>
