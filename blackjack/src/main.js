@@ -1,7 +1,3 @@
-import { Application, Assets, Sprite, Texture } from "pixi.js";
-import tapis from "/assets/CasinoPack/tapis.png";
-import fond from "/assets/CasinoPack/fond.jpg";
-import carte from "/assets/CasinoPack/PNG/Cards/BackgroundRed.png";
 import {
   loadAssets,
   getAsset,
