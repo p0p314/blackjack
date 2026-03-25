@@ -19,7 +19,7 @@ export function calculateHandValue(cards) {
     total -= 10;
     aces--;
   }
-
+  // console.log(`Total hand value: ${total} (with ${aces} aces)`);
   return total;
 }
 
