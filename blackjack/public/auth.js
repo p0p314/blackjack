@@ -2,7 +2,7 @@ const API_BASE_URL = "http://localhost:3000";
 
 const modal = document.getElementById("popupLogin");
 const authArea = document.getElementById("authArea");
-const closeBtn = document.querySelector(".close");
+const closeBtn = document.querySelector(".modal-close");
 
 const showLoginTab = document.getElementById("showLoginTab");
 const showRegisterTab = document.getElementById("showRegisterTab");
@@ -25,11 +25,11 @@ function clearMessage() {
 }
 
 function openModal() {
-  modal.style.display = "block";
+  modal.classList.add("show");
 }
 
 function closeModal() {
-  modal.style.display = "none";
+  modal.classList.remove("show");
   clearMessage();
   loginForm.reset();
   registerForm.reset();
@@ -38,16 +38,16 @@ function closeModal() {
 function switchToLogin() {
   loginFormContainer.style.display = "block";
   registerFormContainer.style.display = "none";
-  showLoginTab.classList.add("active-tab");
-  showRegisterTab.classList.remove("active-tab");
+  showLoginTab.classList.add("active");
+  showRegisterTab.classList.remove("active");
   clearMessage();
 }
 
 function switchToRegister() {
   loginFormContainer.style.display = "none";
   registerFormContainer.style.display = "block";
-  showRegisterTab.classList.add("active-tab");
-  showLoginTab.classList.remove("active-tab");
+  showRegisterTab.classList.add("active");
+  showLoginTab.classList.remove("active");
   clearMessage();
 }
 
@@ -56,6 +56,7 @@ function attachLoginButtonEvent() {
   if (loginBtn) {
     loginBtn.addEventListener("click", (e) => {
       e.preventDefault();
+      console.log("Bouton cliqué, ouverture du modal");
       openModal();
     });
   }
@@ -78,19 +79,28 @@ async function checkAuth() {
     });
 
     const data = await safeJson(response);
+    const playBtn = document.getElementById("playBtn");
 
     if (data.loggedIn) {
       authArea.innerHTML = `
         <div class="user-box">
           <p>Bonjour, ${data.user.pseudo}</p>
+          <button id="statsBtn" class="btn btn-stats">Statistiques</button>
           <button id="logoutBtn" class="logout-btn">Se déconnecter</button>
         </div>
       `;
 
+      playBtn.classList.remove("hidden");
+
       const logoutBtn = document.getElementById("logoutBtn");
+      const statsBtn = document.getElementById("statsBtn");
       logoutBtn.addEventListener("click", logout);
+      statsBtn.addEventListener("click", () => {
+        showMessage("Statistiques - Fonctionnalité à venir", false);
+      });
     } else {
-      authArea.innerHTML = `<a href="#" id="loginBtn" class="connect">Se connecter</a>`;
+      authArea.innerHTML = `<button id="loginBtn" class="btn btn-primary">Se connecter</button>`;
+      playBtn.classList.add("hidden");
       attachLoginButtonEvent();
     }
   } catch (error) {
@@ -106,11 +116,9 @@ async function logout() {
     });
 
     const data = await safeJson(response);
-    alert(data.message || "Déconnexion réussie.");
     await checkAuth();
   } catch (error) {
     console.error("Erreur logout :", error);
-    alert("Erreur lors de la déconnexion.");
   }
 }
 

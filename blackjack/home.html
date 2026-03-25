@@ -10,54 +10,88 @@
     href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap"
     rel="stylesheet"
   />
-  <title>Accueil</title>
+  <title>Blackjack - Accueil</title>
 </head>
 <body>
-  <h1>SIMPLE BLACK JACK</h1>
-  <a href="./index.html" class="play">Jouer</a>
+  <!-- Top navigation bar -->
+  <nav class="navbar">
+    <div class="navbar-left">
+      <h1 class="title">♠ BLACKJACK ♠</h1>
+    </div>
+    <div id="authArea" class="navbar-right">
+      <button id="loginBtn" class="btn btn-primary">Se connecter</button>
+    </div>
+  </nav>
 
-  <div id="authArea">
-    <a href="#" id="loginBtn" class="connect">Se connecter</a>
+  <!-- Notification globale -->
+  <div id="globalNotification" class="global-notification"></div>
+
+  <!-- Main container -->
+  <div class="main-container">
+    <div class="center-content">
+      <h2 class="subtitle">Bienvenue au Blackjack</h2>
+      <p class="description">Rejoignez la table et tentez votre chance</p>
+      <a href="./index.html" id="playBtn" class="btn btn-play hidden">▶ Jouer Maintenant</a>
+    </div>
   </div>
 
-  <div id="popupLogin" class="popup">
-    <div class="popup-content">
-      <span class="close">&times;</span>
+  <!-- Modal de connexion/inscription -->
+  <div id="popupLogin" class="modal">
+    <div class="modal-content">
+      <button class="modal-close" id="closeModal">&times;</button>
 
-      <div class="tabs">
-        <button type="button" id="showLoginTab" class="tab-btn active-tab">
+      <div class="modal-tabs">
+        <button type="button" id="showLoginTab" class="modal-tab active">
           Connexion
         </button>
-        <button type="button" id="showRegisterTab" class="tab-btn">
-          Créer un compte
+        <button type="button" id="showRegisterTab" class="modal-tab">
+          Inscription
         </button>
       </div>
 
-      <div id="messageBox" class="message-box"></div>
+      <div id="messageBox" class="modal-message"></div>
 
-      <div id="loginFormContainer">
+      <div id="loginFormContainer" class="modal-form-container">
         <h2>Se connecter</h2>
-        <form id="loginForm">
-          <label for="loginPseudo">Identifiant :</label>
-          <input type="text" id="loginPseudo" name="pseudo" required />
-
-          <label for="loginPassword">Mot de passe :</label>
-          <input type="password" id="loginPassword" name="password" required />
-
-          <button type="submit">Se connecter</button>
+        <form id="loginForm" class="modal-form">
+          <input 
+            type="text" 
+            id="loginPseudo" 
+            placeholder="Identifiant" 
+            required 
+          />
+          <input 
+            type="password" 
+            id="loginPassword" 
+            placeholder="Mot de passe" 
+            required 
+          />
+          <button type="submit" class="btn btn-primary">Se connecter</button>
         </form>
       </div>
 
-      <div id="registerFormContainer" style="display: none;">
+      <div id="registerFormContainer" class="modal-form-container" style="display: none;">
         <h2>Créer un compte</h2>
-        <form id="registerForm">
-          <label for="registerPseudo">Identifiant :</label>
-          <input type="text" id="registerPseudo" name="pseudo" required />
-
-          <label for="registerPassword">Mot de passe :</label>
-          <input type="password" id="registerPassword" name="password" required />
-
-          <button type="submit">Créer le compte</button>
+        <form id="registerForm" class="modal-form">
+          <input 
+            type="text" 
+            id="registerPseudo" 
+            placeholder="Identifiant" 
+            required 
+          />
+          <input 
+            type="password" 
+            id="registerPassword" 
+            placeholder="Mot de passe (min. 6 caractères)" 
+            required 
+          />
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            placeholder="Confirmer le mot de passe" 
+            required 
+          />
+          <button type="submit" class="btn btn-primary">Créer le compte</button>
         </form>
       </div>
     </div>

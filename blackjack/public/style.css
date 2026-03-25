@@ -1,220 +1,541 @@
-body {
+* {
   margin: 0;
   padding: 0;
-  color: rgba(255, 255, 255, 0.87);
-  background-image: url("./assets/Background/backgroundCasino.jpg");
-  background-size: cover;
+  box-sizing: border-box;
 }
 
-#app {
+html, body {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+}
+
+body {
+  font-family: "Bebas Neue", sans-serif;
+  background: linear-gradient(135deg, #0d3b0d 0%, #1a5c1a 50%, #0a2e0a 100%);
+  background-attachment: fixed;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(13, 59, 13, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid #00ff00;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  z-index: 100;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.navbar-left {
+  flex: 1;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 2px 10px rgba(0, 255, 0, 0.3);
+}
+
+.navbar-right {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-decoration: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  position: relative;
   overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  transition: left 0.3s ease;
+  z-index: -1;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+  color: #0a0e0a;
+  box-shadow: 0 4px 15px rgba(0, 255, 0, 0.4);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 255, 0, 0.6);
+}
+
+.btn-play {
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+  color: white;
+  padding: 15px 45px;
+  font-size: 22px;
+  width: auto;
+  box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.btn-play:hover:not(.hidden) {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 35px rgba(231, 76, 60, 0.6);
+}
+
+.btn-play.hidden {
+  display: none;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: rgba(0, 255, 0, 0.2);
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.btn-secondary:hover {
+  background: #00ff00;
+  color: #0d3b0d;
+}
+
+.btn-danger {
+  background: rgba(231, 76, 60, 0.2);
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.btn-danger:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+.main-container {
+  margin-top: 80px;
+  width: 100%;
+  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-h1 {
-  position: absolute;
-  top: 25%;
+.center-content {
+  text-align: center;
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.subtitle {
+  font-size: 64px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 2px;
+}
+
+.description {
+  font-size: 24px;
+  margin-bottom: 50px;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+.global-notification {
+  position: fixed;
+  top: 100px;
   left: 50%;
-  transform: translate(-50%, -50%);
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 100px;
+  transform: translateX(-50%);
+  padding: 15px 30px;
+  background: rgba(0, 0, 0, 0.9);
+  color: #00ff00;
+  border-radius: 8px;
+  border-left: 4px solid #00ff00;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: none;
+  z-index: 200;
+  animation: slideDown 0.4s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+  max-width: 600px;
+  text-align: center;
 }
 
-.play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: solid 1px red;
-  padding: 15px;
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 50px;
-  text-decoration: none;
-  background-color: red;
-  border-radius: 10px;
-  color: white;
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
+.global-notification.show {
+  display: block;
 }
 
-.play:hover {
-  color: red;
-  background-color: transparent;
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
-.connect {
-  position: absolute;
-  top: 10%;
-  left: 85%;
-  transform: translate(-50%, -50%);
-  border: solid 1px red;
-  padding: 15px;
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 40px;
-  text-decoration: none;
-  background-color: red;
-  border-radius: 10px;
-  color: white;
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
-}
-
-.connect:hover {
-  color: red;
-  background-color: transparent;
-}
-
-.popup {
+.modal {
   display: none;
   position: fixed;
-  z-index: 1;
+  z-index: 300;
   left: 0;
   top: 0;
   width: 100%;
   height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease;
 }
 
-.popup-content {
-  background-color: white;
-  margin: 10% auto;
-  padding: 20px;
-  width: 500px;
-  border-radius: 10px;
-  border: solid 1px red;
+.modal.show {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.popup-content h2 {
-  font-family: "Bebas Neue", sans-serif;
-  color: black;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1a5c1a 0%, #0a2e0a 100%);
+  border: 2px solid #00ff00;
+  border-radius: 12px;
+  padding: 40px;
+  width: 95%;
+  max-width: 500px;
+  position: relative;
+  animation: slideUp 0.4s ease;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  color: #00ff00;
+  font-size: 32px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.modal-close:hover {
+  transform: rotate(90deg);
+}
+
+.modal-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid rgba(0, 255, 0, 0.2);
+}
+
+.modal-tab {
+  flex: 1;
+  padding: 12px 0;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  position: relative;
+}
+
+.modal-tab.active {
+  color: #00ff00;
+  border-bottom-color: #00ff00;
+}
+
+.modal-tab:hover {
+  color: rgba(0, 255, 0, 0.8);
+}
+
+.modal-form-container h2 {
   text-align: center;
-  font-size: 40px;
-  margin: 0;
+  margin-bottom: 25px;
+  color: #00ff00;
+  font-size: 28px;
+  letter-spacing: 1px;
 }
 
-label {
-  display: block;
+.modal-form-container {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-form input {
+  padding: 12px 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(0, 255, 0, 0.3);
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
   font-family: "Bebas Neue", sans-serif;
-  color: black;
-  font-size: 25px;
+  transition: all 0.3s ease;
+}
+
+.modal-form input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.modal-form input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #00ff00;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.modal-form button {
   margin-top: 10px;
 }
 
-.close {
-  float: right;
-  font-size: 28px;
-  cursor: pointer;
-  color: red;
-}
-
-input {
-  width: 95%;
-  padding: 8px;
-  margin: 10px 0;
-  border: solid 1px #0b4d03;
-  border-radius: 10px;
-}
-
-button {
-  border: solid 1px red;
-  padding: 10px;
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: 300;
-  font-style: normal;
-  font-size: 25px;
-  text-decoration: none;
-  background-color: red;
-  border-radius: 10px;
-  color: white;
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
-  cursor: pointer;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-button:hover {
-  color: red;
-  background-color: transparent;
-}
-
-.tabs {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.tab-btn {
-  border: solid 1px red;
-  padding: 10px 20px;
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 22px;
-  background-color: white;
-  color: red;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.tab-btn:hover,
-.active-tab {
-  background-color: red;
-  color: white;
-}
-
-.message-box {
+.modal-message {
   text-align: center;
-  font-family: Arial, sans-serif;
-  margin-bottom: 15px;
   min-height: 20px;
-  color: red;
+  margin-bottom: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .user-box {
-  position: absolute;
-  top: 10%;
-  left: 82%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  display: flex;
+  gap: 15px;
+  align-items: center;
   font-family: "Bebas Neue", sans-serif;
-  color: white;
 }
 
 .user-box p {
-  margin: 0 0 10px 0;
-  font-size: 30px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
 .logout-btn {
-  border: solid 1px red;
-  padding: 10px 15px;
-  font-family: "Bebas Neue", sans-serif;
-  font-size: 28px;
-  text-decoration: none;
-  background-color: red;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
   color: white;
-  transition:
-    color 0.3s ease,
-    background-color 0.3s ease;
+  border: none;
+  padding: 10px 20px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
 }
 
 .logout-btn:hover {
-  color: red;
-  background-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+.btn-stats {
+  background: linear-gradient(135deg, #00aa00 0%, #008800 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.btn-stats:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 255, 0, 0.4);
+}
+
+.user-profile {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.user-name {
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.user-stats {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 20px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .navbar-right {
+    gap: 10px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+
+  .btn-play {
+    font-size: 18px;
+    padding: 12px 35px;
+  }
+
+  .subtitle {
+    font-size: 48px;
+  }
+
+  .description {
+    font-size: 18px;
+  }
+
+  .modal-content {
+    padding: 30px 20px;
+  }
+
+  .center-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    height: 70px;
+    padding: 0 15px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .navbar-right {
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  .btn-play {
+    font-size: 16px;
+    padding: 10px 25px;
+  }
+
+  .subtitle {
+    font-size: 36px;
+  }
+
+  .description {
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .modal-content {
+    width: 98%;
+    padding: 25px 15px;
+  }
+
+  .main-container {
+    margin-top: 70px;
+    height: calc(100vh - 70px);
+  }
 }
