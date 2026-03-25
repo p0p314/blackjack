@@ -11,6 +11,7 @@ import {
 import { CARDS, CHIPS } from "./Assets.js";
 import ImageView from "./Manager/ImageView.js";
 import Scene from "./Scene.js";
+import { socket } from "./Socket.js";
 
 const canvas = document.createElement("canvas");
 const ctx = canvas.getContext("2d");
@@ -61,6 +62,7 @@ resize();
     console.log("Carte clicked!");
     index = Math.floor(Math.random() * taille);
     carte.image = getCard(Object.keys(CARDS)[index]);
+    socket.emit("tirerCarte");
   };
   sceneJeu.add(carte);
 
