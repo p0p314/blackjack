@@ -10,8 +10,8 @@ import cors from "cors";
 dotenv.config();
 
 const app = express();
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const server = createServer(app);
+const io = new Server(server, {
   cors: {
     origin: "http://localhost:8080",
     credentials: true,
@@ -458,7 +458,7 @@ app.get("/api/stats", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Serveur API lancé sur http://localhost:${PORT}`);
   console.log(`Socket.io serveur prêt`);
 });
