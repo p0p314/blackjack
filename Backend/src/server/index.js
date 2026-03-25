@@ -168,33 +168,38 @@ app.get("/api/stats", async (req, res) => {
     }
 
     const userId = req.session.user.id_joueur;
-    console.log(userId);
 
-    // 1) Vue d'ensemble : total parties / taux victoire / taux bust
-    const [overviewRows] = await pool.query(
+    // 1) Récupération bankroll initiale
+    const [joueurRows] = await pool.query(
       `
-      SELECT 
-          j.pseudo,
-          COUNT(*) AS total_parties,
-          ROUND((COUNT(CASE WHEN p.resultat = 'Victoire' THEN 1 END) / COUNT(*)) * 100, 2) AS taux_victoires,
-          ROUND((COUNT(CASE WHEN p.resultat = 'Bust' THEN 1 END) / COUNT(*)) * 100, 2) AS taux_bust
-      FROM Partie p
-      LEFT JOIN Joueur j ON j.id_joueur = p.id_joueur
-      WHERE p.id_joueur = ?
-      GROUP BY j.pseudo
+      SELECT pseudo, bankroll_initiale
+      FROM Joueur
+      WHERE id_joueur = ?
       `,
       [userId],
     );
 
-    // Si aucune partie n'existe encore
-    const overview = overviewRows[0] || {
-      pseudo: req.session.user.pseudo,
-      total_parties: 0,
-      taux_victoires: 0,
-      taux_bust: 0,
-    };
+    const joueur = joueurRows[0];
 
-    // 2) Evolution de la bankroll
+    const bankrollInitiale = Number(joueur?.bankroll_initiale) || 1000;
+    const pseudo = joueur?.pseudo || "Joueur";
+
+    // 2) Overview stats
+    const [overviewRows] = await pool.query(
+      `
+      SELECT 
+          COUNT(*) AS total_parties,
+          ROUND((COUNT(CASE WHEN resultat = 'Victoire' THEN 1 END) / COUNT(*)) * 100, 2) AS taux_victoires,
+          ROUND((COUNT(CASE WHEN resultat = 'Bust' THEN 1 END) / COUNT(*)) * 100, 2) AS taux_bust
+      FROM Partie
+      WHERE id_joueur = ?
+      `,
+      [userId],
+    );
+
+    const overview = overviewRows[0] || {};
+
+    // 3) Evolution bankroll
     const [bankrollRows] = await pool.query(
       `
       SELECT 
@@ -210,7 +215,21 @@ app.get("/api/stats", async (req, res) => {
       [userId],
     );
 
-    // 3) Fréquence des actions
+    // 👉 Ajout du point de départ (partie 0)
+    const bankrollEvolution = [
+      {
+        partie: 0,
+        date: null,
+        valeur: bankrollInitiale,
+      },
+      ...bankrollRows.map((row, index) => ({
+        partie: index + 1,
+        date: row.date_partie,
+        valeur: Number(row.evolution_bankroll) || 0,
+      })),
+    ];
+
+    // 4) Fréquence des actions
     const [actionsRows] = await pool.query(
       `
       SELECT 
@@ -231,34 +250,10 @@ app.get("/api/stats", async (req, res) => {
       INNER JOIN Partie p ON a.id_partie = p.id_partie
       WHERE p.id_joueur = ?
       GROUP BY a.type_action
-      ORDER BY nb_utilisations DESC
       `,
       [userId, userId],
     );
 
-    // 4) Tendance du joueur
-    const [trendRows] = await pool.query(
-      `
-      SELECT 
-          CASE 
-              WHEN COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main > 16 THEN 1 END) >
-                   COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main < 15 THEN 1 END)
-              THEN 'Agressif'
-              WHEN COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main < 15 THEN 1 END) >
-                   COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main > 16 THEN 1 END)
-              THEN 'Prudent'
-              ELSE 'Équilibré'
-          END AS tendance_nom
-      FROM Action a
-      INNER JOIN Partie p ON a.id_partie = p.id_partie
-      WHERE p.id_joueur = ?
-      `,
-      [userId],
-    );
-
-    const tendance = trendRows[0]?.tendance_nom || "Équilibré";
-
-    // 5) Formatage des fréquences d'actions pour garantir toutes les clés
     const actionsMap = {
       Tirer: 0,
       Rester: 0,
@@ -280,17 +275,36 @@ app.get("/api/stats", async (req, res) => {
       }
     }
 
+    // 5) Tendance
+    const [trendRows] = await pool.query(
+      `
+      SELECT 
+          CASE 
+              WHEN COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main > 16 THEN 1 END) >
+                   COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main < 15 THEN 1 END)
+              THEN 'Agressif'
+              WHEN COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main < 15 THEN 1 END) >
+                   COUNT(CASE WHEN a.type_action = 'Tirer' AND a.valeur_main > 16 THEN 1 END)
+              THEN 'Prudent'
+              ELSE 'Équilibré'
+          END AS tendance_nom
+      FROM Action a
+      INNER JOIN Partie p ON a.id_partie = p.id_partie
+      WHERE p.id_joueur = ?
+      `,
+      [userId],
+    );
+
+    const tendance = trendRows[0]?.tendance_nom || "Équilibré";
+
+    // 6) Réponse finale
     res.json({
-      pseudo: overview.pseudo,
+      pseudo,
       totalParties: Number(overview.total_parties) || 0,
       tauxVictoires: Number(overview.taux_victoires) || 0,
       tauxBust: Number(overview.taux_bust) || 0,
       tendance,
-      bankrollEvolution: bankrollRows.map((row, index) => ({
-        partie: index + 1,
-        date: row.date_partie,
-        valeur: Number(row.evolution_bankroll) || 0,
-      })),
+      bankrollEvolution,
       actions: {
         tirer: {
           count: actionsCountMap.Tirer,
