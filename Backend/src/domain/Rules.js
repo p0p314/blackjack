@@ -1,10 +1,18 @@
 // rules.js
 export function calculateHandValue(cards) {
   let total = 0;
-
+  let aces = 0;
   cards.forEach((card) => {
+    if (card.isAs()) {
+      aces += 1;
+    }
     total += parseInt(card.value);
   });
+
+  while (total > 21 && aces > 0) {
+    total -= 10;
+    aces -= 1;
+  }
 
   return total;
 }
