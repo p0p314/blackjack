@@ -6,6 +6,7 @@ class LobbyManager {
     this.currentPlayer = null;
     this.players = [];
     this.gameStarting = false;
+    this.redirectingToGame = false;
     this.init();
   }
 
@@ -28,6 +29,7 @@ class LobbyManager {
 
     try {
       await socketManager.connect();
+      console.log("Socket connecté au lobby");
 
       socketManager.emit(ClientEvents.JOIN_LOBBY, {
         playerId: this.currentPlayer.id_joueur,
@@ -63,6 +65,7 @@ class LobbyManager {
 
   setupSocketListeners() {
     socketManager.onLobbyUpdated((data) => {
+      console.log("Lobby mis à jour:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
@@ -70,6 +73,7 @@ class LobbyManager {
     });
 
     socketManager.onPlayerJoined((data) => {
+      console.log("Joueur rejoint:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
@@ -77,6 +81,7 @@ class LobbyManager {
     });
 
     socketManager.onPlayerLeft((data) => {
+      console.log("Joueur quitté:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
@@ -84,14 +89,16 @@ class LobbyManager {
     });
 
     socketManager.onGameStarting((data) => {
+      console.log("Partie en cours de démarrage:", data);
       this.gameStarting = true;
+      this.redirectingToGame = true;
 
       const hostPlayerId = data?.players?.[0]?.id;
       const isHost = hostPlayerId === this.currentPlayer?.id_joueur;
 
       setTimeout(() => {
         window.location.href = `./index.html?host=${isHost ? "1" : "0"}`;
-      }, 1500);
+      }, 1200);
     });
 
     socketManager.onError((error) => {
@@ -113,7 +120,7 @@ class LobbyManager {
         (player) => `
       <li class="player-item">
         <span class="player-name">${player.name}</span>
-        <span class="player-status">${player.status === "ready" ? "Pret" : "En attente"}</span>
+        <span class="player-status">${player.status === "ready" ? "Prêt" : "En attente"}</span>
       </li>
     `,
       )
@@ -148,6 +155,7 @@ class LobbyManager {
   startGame() {
     if (!this.gameStarting && this.players.length > 0) {
       socketManager.startGame();
+      console.log("Démarrage de la partie...");
     }
   }
 }
@@ -165,7 +173,7 @@ document.getElementById("leaveBtn").addEventListener("click", () => {
 });
 
 window.addEventListener("beforeunload", () => {
-  if (lobbyManager.currentPlayer) {
+  if (lobbyManager.currentPlayer && !lobbyManager.redirectingToGame) {
     socketManager.leaveLobby(lobbyManager.currentPlayer.id_joueur);
   }
 });
