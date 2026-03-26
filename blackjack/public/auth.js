@@ -56,7 +56,6 @@ function attachLoginButtonEvent() {
   if (loginBtn) {
     loginBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log("Bouton cliqué, ouverture du modal");
       openModal();
     });
   }
@@ -74,33 +73,45 @@ async function safeJson(response) {
 
 async function checkAuth() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/me`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
       credentials: "include",
     });
 
     const data = await safeJson(response);
     const playBtn = document.getElementById("playBtn");
 
-    if (data.loggedIn) {
+    if (response.ok && data.id_joueur) {
       authArea.innerHTML = `
         <div class="user-box">
-          <p>Bonjour, ${data.user.pseudo}</p>
+          <p>Bonjour, ${data.pseudo}</p>
           <button id="statsBtn" class="btn btn-stats">Statistiques</button>
           <button id="logoutBtn" class="logout-btn">Se déconnecter</button>
         </div>
       `;
 
-      playBtn.classList.remove("hidden");
+      if (playBtn) {
+        playBtn.classList.remove("hidden");
+      }
 
       const logoutBtn = document.getElementById("logoutBtn");
       const statsBtn = document.getElementById("statsBtn");
-      logoutBtn.addEventListener("click", logout);
-      statsBtn.addEventListener("click", () => {
-        window.location.href = "/stats.html";
-      });
+
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
+      }
+
+      if (statsBtn) {
+        statsBtn.addEventListener("click", () => {
+          window.location.href = "/stats.html";
+        });
+      }
     } else {
       authArea.innerHTML = `<button id="loginBtn" class="btn btn-primary">Se connecter</button>`;
-      playBtn.classList.add("hidden");
+
+      if (playBtn) {
+        playBtn.classList.add("hidden");
+      }
+
       attachLoginButtonEvent();
     }
   } catch (error) {
@@ -110,12 +121,11 @@ async function checkAuth() {
 
 async function logout() {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/logout`, {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
 
-    const data = await safeJson(response);
     await checkAuth();
   } catch (error) {
     console.error("Erreur logout :", error);
@@ -141,7 +151,7 @@ loginForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("loginPassword").value.trim();
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/login`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -177,7 +187,7 @@ registerForm.addEventListener("submit", async (e) => {
   const password = document.getElementById("registerPassword").value.trim();
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/register`, {
+    const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -208,7 +218,6 @@ registerForm.addEventListener("submit", async (e) => {
 attachLoginButtonEvent();
 checkAuth();
 
-// Play button handler
 const playBtn = document.getElementById("playBtn");
 if (playBtn) {
   playBtn.addEventListener("click", (e) => {

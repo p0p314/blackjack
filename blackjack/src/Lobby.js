@@ -1,5 +1,5 @@
-import socketManager from '/src/socket/SocketManager.js';
-import { ClientEvents, ServerEvents } from '/src/socket/SocketEvents.js';
+import socketManager from "/src/socket/SocketManager.js";
+import { ClientEvents, ServerEvents } from "/src/socket/SocketEvents.js";
 
 class LobbyManager {
   constructor() {
@@ -9,133 +9,138 @@ class LobbyManager {
     this.init();
   }
 
+  async safeJson(response) {
+    const text = await response.text();
+    if (!text) return {};
+    try {
+      return JSON.parse(text);
+    } catch {
+      return {};
+    }
+  }
+
   async init() {
-    // Get current user info
     await this.getCurrentUser();
-    
-    // Connect socket
+
+    if (!this.currentPlayer) {
+      return;
+    }
+
     try {
       await socketManager.connect();
-      console.log('Socket connecté au lobby');
-      
-      // Join lobby with player info
-      if (this.currentPlayer) {
-        socketManager.emit(ClientEvents.JOIN_LOBBY, {
-          playerId: this.currentPlayer.id_joueur,
-          name: this.currentPlayer.pseudo,
-        });
-      }
-      
-      // Set up event listeners
+      console.log("Socket connecté au lobby");
+
+      socketManager.emit(ClientEvents.JOIN_LOBBY, {
+        playerId: this.currentPlayer.id_joueur,
+        name: this.currentPlayer.pseudo,
+      });
+
       this.setupSocketListeners();
     } catch (error) {
-      console.error('Erreur connexion socket:', error);
+      console.error("Erreur connexion socket:", error);
     }
   }
 
   async getCurrentUser() {
     try {
-      const response = await fetch('http://localhost:3000/api/me', {
-        credentials: 'include',
+      const response = await fetch("http://localhost:3000/api/auth/me", {
+        credentials: "include",
       });
-      const data = await response.json();
-      
-      if (data.loggedIn) {
-        this.currentPlayer = data.user;
-        document.getElementById('userInfo').textContent = `Bienvenue, ${data.user.pseudo}`;
+
+      const data = await this.safeJson(response);
+
+      if (response.ok && data.id_joueur) {
+        this.currentPlayer = data;
+        document.getElementById("userInfo").textContent =
+          `Bienvenue, ${data.pseudo}`;
       } else {
-        // Redirect to home if not logged in
-        window.location.href = './home.html';
+        window.location.href = "./home.html";
       }
     } catch (error) {
-      console.error('Erreur récupération utilisateur:', error);
-      window.location.href = './home.html';
+      console.error("Erreur récupération utilisateur:", error);
+      window.location.href = "./home.html";
     }
   }
 
   setupSocketListeners() {
-    // Lobby updated event
     socketManager.onLobbyUpdated((data) => {
-      console.log('Lobby mis à jour:', data);
+      console.log("Lobby mis à jour:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
       this.checkStartGameButton();
     });
 
-    // Player joined event
     socketManager.onPlayerJoined((data) => {
-      console.log('Joueur rejoint:', data);
+      console.log("Joueur rejoint:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
       this.checkStartGameButton();
     });
 
-    // Player left event
     socketManager.onPlayerLeft((data) => {
-      console.log('Joueur quitté:', data);
+      console.log("Joueur quitté:", data);
       this.players = data.players || [];
       this.updatePlayersList();
       this.updatePlayerCount();
+      this.checkStartGameButton();
     });
 
-    // Game starting event
     socketManager.onGameStarting((data) => {
-      console.log('Partie en cours de démarrage:', data);
+      console.log("Partie en cours de démarrage:", data);
       this.gameStarting = true;
-      
-      // Redirect to game page
+
       setTimeout(() => {
-        window.location.href = './index.html';
+        window.location.href = "./index.html";
       }, 1500);
     });
 
-    // Error handler
     socketManager.onError((error) => {
-      console.error('Erreur socket:', error);
+      console.error("Erreur socket:", error);
     });
   }
 
   updatePlayersList() {
-    const playersList = document.getElementById('playersList');
-    
+    const playersList = document.getElementById("playersList");
+
     if (!this.players || this.players.length === 0) {
-      playersList.innerHTML = '<li class="empty-state">En attente de joueurs...</li>';
+      playersList.innerHTML =
+        '<li class="empty-state">En attente de joueurs...</li>';
       return;
     }
 
-    playersList.innerHTML = this.players.map(player => `
+    playersList.innerHTML = this.players
+      .map(
+        (player) => `
       <li class="player-item">
         <span class="player-name">${player.name}</span>
-        <span class="player-status">${player.status === 'ready' ? 'Pret' : 'En attente'}</span>
+        <span class="player-status">${player.status === "ready" ? "Pret" : "En attente"}</span>
       </li>
-    `).join('');
+    `,
+      )
+      .join("");
   }
 
   updatePlayerCount() {
     const count = this.players.length;
     const maxPlayers = 4;
-    document.getElementById('playerCount').textContent = `${count} / ${maxPlayers} joueurs`;
+    document.getElementById("playerCount").textContent =
+      `${count} / ${maxPlayers} joueurs`;
   }
 
   checkStartGameButton() {
-    const startBtn = document.getElementById('startGameBtn');
+    const startBtn = document.getElementById("startGameBtn");
     const playersCount = this.players.length;
-    
-    // Game can start with at least 1 player
-    // and current player is the first one (dealer)
-    const isDealer = this.currentPlayer && this.players[0]?.id === this.currentPlayer.id_joueur;
-    
-    if (playersCount >= 1 && isDealer && !this.gameStarting) {
-      startBtn.disabled = false;
-    } else {
-      startBtn.disabled = true;
-    }
+
+    const isDealer =
+      this.currentPlayer &&
+      this.players[0]?.id === this.currentPlayer.id_joueur;
+
+    startBtn.disabled = !(playersCount >= 1 && isDealer && !this.gameStarting);
   }
 
-  showNotification(message, type = 'success') {
-    // Notifications disabled - using console logging only
+  showNotification(message, type = "success") {
     console.log(`[${type}] ${message}`);
   }
 
@@ -143,33 +148,30 @@ class LobbyManager {
     if (this.currentPlayer) {
       socketManager.leaveLobby(this.currentPlayer.id_joueur);
     }
-    window.location.href = './home.html';
+    window.location.href = "./home.html";
   }
 
   startGame() {
     if (!this.gameStarting && this.players.length > 0) {
       socketManager.startGame();
-      console.log('Demarrage de la partie...');
+      console.log("Demarrage de la partie...");
     }
   }
 }
 
-// Initialize
 const lobbyManager = new LobbyManager();
 
-// Setup button listeners
-document.getElementById('startGameBtn').addEventListener('click', () => {
+document.getElementById("startGameBtn").addEventListener("click", () => {
   lobbyManager.startGame();
 });
 
-document.getElementById('leaveBtn').addEventListener('click', () => {
-  if (confirm('Êtes-vous sûr de vouloir quitter le lobby ?')) {
+document.getElementById("leaveBtn").addEventListener("click", () => {
+  if (confirm("Êtes-vous sûr de vouloir quitter le lobby ?")) {
     lobbyManager.leaveLobby();
   }
 });
 
-// Handle window close
-window.addEventListener('beforeunload', () => {
+window.addEventListener("beforeunload", () => {
   if (lobbyManager.currentPlayer) {
     socketManager.leaveLobby(lobbyManager.currentPlayer.id_joueur);
   }

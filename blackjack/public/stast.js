@@ -113,18 +113,18 @@ function renderBankrollChart(data) {
 }
 
 async function checkAuth() {
-  const response = await fetch(`${API_BASE_URL}/api/me`, {
+  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
     credentials: "include",
   });
 
   const data = await safeJson(response);
 
-  if (!data.loggedIn) {
+  if (!response.ok || !data.id_joueur) {
     window.location.href = "/home.html";
     return null;
   }
 
-  return data.user;
+  return data;
 }
 
 async function loadStats() {
@@ -132,9 +132,12 @@ async function loadStats() {
     const user = await checkAuth();
     if (!user) return;
 
-    const response = await fetch(`${API_BASE_URL}/api/stats`, {
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/stats/joueur/${user.id_joueur}`,
+      {
+        credentials: "include",
+      },
+    );
 
     const data = await safeJson(response);
 
@@ -154,7 +157,7 @@ async function loadStats() {
 
 async function logout() {
   try {
-    await fetch(`${API_BASE_URL}/api/logout`, {
+    await fetch(`${API_BASE_URL}/api/auth/logout`, {
       method: "POST",
       credentials: "include",
     });
