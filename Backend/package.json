@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "node src/server/index.js",
-    "dev": "nodemon src/server/index.js"
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
   },
   "type": "module",
   "dependencies": {
@@ -11,7 +11,9 @@
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "mysql2": "^3.20.0",
-    "socket.io": "^4.8.3"
+    "sequelize": "^6.37.8",
+    "socket.io": "^4.8.3",
+    "sqlite3": "^6.0.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
@@ -19,7 +21,6 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "testGame.js",
   "keywords": [],
   "author": "",
   "license": "ISC"
