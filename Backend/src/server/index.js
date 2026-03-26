@@ -1,5 +1,4 @@
 import express from "express";
-import { createServer } from "http";
 import { Server } from "socket.io";
 import dotenv from "dotenv";
 import mysql from "mysql2/promise";
@@ -7,21 +6,12 @@ import bcrypt from "bcrypt";
 import session from "express-session";
 import cors from "cors";
 import http from "http";
-import { Server } from "socket.io";
-import Card from "../domain/Card.js";
 import initSocket from "./socket.js";
 import Game from "../domain/Game.js";
+
 dotenv.config();
 
 const app = express();
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "http://localhost:8080",
-    credentials: true,
-  },
-});
-
 const PORT = process.env.PORT || 3000;
 
 app.use(
@@ -30,7 +20,6 @@ app.use(
     credentials: true,
   }),
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -52,120 +41,6 @@ const pool = mysql.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-});
-
-// Lobby management
-const lobby = {
-  players: [],
-  maxPlayers: 4,
-};
-
-// Socket.io event handlers
-io.on("connection", (socket) => {
-  console.log(`Joueur connecté: ${socket.id}`);
-
-  socket.on("JOIN_LOBBY", (data) => {
-    console.log(`Joueur ${data.playerId} (${data.name}) rejoint le lobby`);
-
-    // Check if player already in lobby
-    const existingPlayer = lobby.players.find((p) => p.id === data.playerId);
-
-    if (!existingPlayer) {
-      const newPlayer = {
-        id: data.playerId,
-        socketId: socket.id,
-        name: data.name || `Joueur ${data.playerId}`,
-        status: "ready",
-      };
-      lobby.players.push(newPlayer);
-
-      // Notify all players that someone joined
-      io.emit("PLAYER_JOINED", {
-        playerName: newPlayer.name,
-        players: lobby.players.map((p) => ({
-          id: p.id,
-          name: p.name,
-          status: p.status,
-        })),
-      });
-
-      // Send updated lobby to new player
-      socket.emit("LOBBY_UPDATED", {
-        players: lobby.players.map((p) => ({
-          id: p.id,
-          name: p.name,
-          status: p.status,
-        })),
-      });
-    }
-
-    socket.join("lobby");
-  });
-
-  socket.on("LEAVE_LOBBY", (data) => {
-    console.log(`Joueur ${data.playerId} quitte le lobby`);
-    const playerIndex = lobby.players.findIndex((p) => p.id === data.playerId);
-
-    if (playerIndex !== -1) {
-      const removedPlayer = lobby.players[playerIndex];
-      lobby.players.splice(playerIndex, 1);
-
-      // Notify all players that someone left
-      io.emit("PLAYER_LEFT", {
-        playerName: removedPlayer.name,
-        players: lobby.players.map((p) => ({
-          id: p.id,
-          name: p.name,
-          status: p.status,
-        })),
-      });
-    }
-
-    socket.leave("lobby");
-  });
-
-  socket.on("START_GAME", () => {
-    console.log("Démarrage de la partie");
-
-    if (lobby.players.length > 0) {
-      // Notify all players that game is starting
-      io.emit("GAME_STARTING", {
-        players: lobby.players.map((p) => ({
-          id: p.id,
-          name: p.name,
-        })),
-      });
-
-      // Clear lobby for next game
-      setTimeout(() => {
-        lobby.players = [];
-      }, 2000);
-    }
-  });
-
-  socket.on("disconnect", () => {
-    console.log(`Joueur déconnecté: ${socket.id}`);
-
-    // Remove player from lobby if they disconnect
-    const playerIndex = lobby.players.findIndex(
-      (p) => p.socketId === socket.id,
-    );
-
-    if (playerIndex !== -1) {
-      const removedPlayer = lobby.players[playerIndex];
-      lobby.players.splice(playerIndex, 1);
-
-      // Notify all players that someone left
-      io.emit("PLAYER_LEFT", {
-        playerName: removedPlayer.name,
-        players: lobby.players.map((p) => ({
-          id: p.id,
-          name: p.name,
-          status: p.status,
-        })),
-      });
-    }
-  });
 });
 
 app.get("/api/health", (req, res) => {
@@ -457,6 +332,11 @@ app.get("/api/stats", async (req, res) => {
     res.status(500).json({ message: "Erreur serveur." });
   }
 });
+
+const server = http.createServer(app);
+const io = new Server(server);
+const game = new Game();
+initSocket(io, game);
 
 server.listen(PORT, () => {
   console.log(`Serveur API lancé sur http://localhost:${PORT}`);
