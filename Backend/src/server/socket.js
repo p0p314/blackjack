@@ -5,6 +5,9 @@ export default function initSocket(io, game) {
   const lobbyPlayersBySocketId = new Map();
   const gameStartState = {
     pendingPlayers: null,
+    playerGameIds: new Map(),
+    roundInitialized: false,
+    resultsPersisted: false,
   };
 
   io.on("connect", (socket) => {

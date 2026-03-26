@@ -47,7 +47,7 @@ export function emitGameResultsIfReady(io, game) {
   const resultGame = game.calulateResults();
 
   if (resultGame == null) {
-    return;
+    return null;
   }
 
   Object.entries(GAME_RESULT_EVENTS).forEach(([status, eventName]) => {
@@ -56,4 +56,5 @@ export function emitGameResultsIfReady(io, game) {
       io.emit(eventName, resultGame);
     }
   });
+  return resultGame;
 }
