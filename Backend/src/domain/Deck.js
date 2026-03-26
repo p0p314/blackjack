@@ -3,15 +3,20 @@ import Card from "./Card.js";
 export default class Deck {
   constructor() {
     this.cards = [];
+    this.reset();
   }
 
   draw() {
-    let cardDrawn = this.cards.pop();
-    this.shuffle();
-    return cardDrawn;
+    if (this.cards.length === 0) {
+      this.reset();
+    }
+
+    return this.cards.pop();
   }
 
-  shuffle() {
+  reset() {
+    this.cards = [];
+
     const suits = ["Hearts", "Diamonds", "Clubs", "Spades"];
     const values = [
       "2",
@@ -35,6 +40,10 @@ export default class Deck {
       }
     }
 
+    this.shuffle();
+  }
+
+  shuffle() {
     for (let i = this.cards.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [this.cards[i], this.cards[j]] = [this.cards[j], this.cards[i]];

@@ -71,6 +71,10 @@ class GameSocket {
     this.emit("PLAY_AGAIN", playerId, name);
   }
 
+  leaveGame(playerId) {
+    this.emit("LEAVE_GAME", playerId);
+  }
+
   disconnect() {
     this.socket?.disconnect();
   }

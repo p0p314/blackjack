@@ -34,7 +34,9 @@ export default class Game {
       name: "Dealer",
       status: this.dealer.status,
       hand: [...this.dealer.hand],
-      score: calculateHandValue(this.dealer.hand),
+      score: calculateHandValue(
+        this.dealer.hand.filter((card) => card.isRevealed),
+      ),
     };
   }
 
@@ -175,13 +177,14 @@ export default class Game {
     let lastCard = null;
 
     while (shouldDealerHit(this.dealer.hand)) {
+      this.dealer.hand.forEach((card) => card.reveal());
       const card = this.deck.draw();
 
       if (card.isAs()) {
         const currentScore = calculateHandValue(this.dealer.hand);
         card.value = currentScore + 11 > 21 ? 1 : 11;
       }
-
+      card.reveal();
       this.dealer.addCard(card);
       lastCard = card;
 

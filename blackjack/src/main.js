@@ -13,7 +13,8 @@ import { socket } from "./Socket.js";
 const API_BASE_URL = "http://localhost:3000";
 const CARD_WIDTH = 90;
 const CARD_HEIGHT = 135;
-const CARD_SPACING = 28;
+// spacing >= CARD_WIDTH to avoid overlap between cards
+const CARD_SPACING = CARD_WIDTH + 10;
 const MAX_PLAYERS = 4;
 
 function safeNumber(value) {
@@ -155,6 +156,7 @@ class BlackjackApp {
       hit: null,
       stand: null,
       playAgain: null,
+      leave: null,
     };
   }
 
@@ -174,8 +176,8 @@ class BlackjackApp {
     await this.fetchCurrentUser();
     this.buildStaticBackground();
     this.registerCanvasEvents();
-    this.registerSocketEvents();
     await socket.connect();
+    this.registerSocketEvents();
     this.joinGame();
     this.renderLoop();
   }
@@ -388,6 +390,24 @@ class BlackjackApp {
     socket.on("PLAYER_WIN", handleResults);
     socket.on("PLAYER_LOST", handleResults);
     socket.on("PLAYER_DRAW", handleResults);
+
+    socket.on("PLAYER_LEFT_GAME", (payload) => {
+      if (!payload || payload.playerId == null) return;
+
+      if (payload.playerId === this.localPlayerId) {
+        this.banner = "Vous avez quitté la partie.";
+        this.phase = "boot";
+        setTimeout(() => {
+          window.location.href = "/home.html";
+        }, 300);
+        return;
+      }
+
+      this.players = this.players.filter(
+        (player) => player.id !== payload.playerId,
+      );
+      this.banner = `${payload.name ?? "Un joueur"} a quitté la partie.`;
+    });
   }
 
   joinGame() {
@@ -424,6 +444,12 @@ class BlackjackApp {
     this.resultsByPlayerId.clear();
 
     socket.playAgain(this.currentUser.id_joueur, this.currentUser.pseudo);
+  }
+
+  onLeaveGame() {
+    if (!this.currentUser) return;
+    this.banner = "Déconnexion de la table...";
+    socket.leaveGame(this.currentUser.id_joueur);
   }
 
   orderedPlayersForRender() {
@@ -576,6 +602,17 @@ class BlackjackApp {
     const canAct = this.isLocalTurn();
     const showReplay = this.phase === "finished";
 
+    this.buttons.leave = new ButtonView({
+      x: w - 475,
+      y: h - 92,
+      width: 100,
+      height: 52,
+      text: "QUITTER",
+      background: "#b33a3a",
+      enabled: true,
+      onClick: () => this.onLeaveGame(),
+    });
+
     this.buttons.hit = new ButtonView({
       x: w - 360,
       y: h - 92,
@@ -609,6 +646,7 @@ class BlackjackApp {
       onClick: () => this.onPlayAgain(),
     });
 
+    this.gameScene.add(this.buttons.leave);
     this.gameScene.add(this.buttons.hit);
     this.gameScene.add(this.buttons.stand);
     this.gameScene.add(this.buttons.playAgain);

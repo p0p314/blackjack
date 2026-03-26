@@ -1,7 +1,24 @@
 import { GAME_RESULT_EVENTS } from "./events.js";
 
+function formatPayload(payload) {
+  try {
+    const serialized = JSON.stringify(payload);
+    return serialized.length > 500
+      ? `${serialized.slice(0, 500)}...`
+      : serialized;
+  } catch (error) {
+    return String(payload);
+  }
+}
+
+function logEmit(eventName, payload) {
+  console.log(`[socket][emit] ${eventName}`, formatPayload(payload));
+}
+
 export function emitGameStarted(io, game) {
-  io.emit("GAME_STARTED", game.getSnapshot());
+  const payload = game.getSnapshot();
+  logEmit("GAME_STARTED", payload);
+  io.emit("GAME_STARTED", payload);
 }
 
 export function emitDealerStateIfNeeded(io, game) {
@@ -12,14 +29,18 @@ export function emitDealerStateIfNeeded(io, game) {
   const dealerResult = game.dealerPlay();
 
   if (dealerResult.status === "bust") {
+    logEmit("DEALER_BUST", dealerResult);
     io.emit("DEALER_BUST", dealerResult);
   } else if (dealerResult.status === "stood") {
+    logEmit("DEALER_STOOD", dealerResult);
     io.emit("DEALER_STOOD", dealerResult);
   }
 }
 
 export function emitInitialCardSend(io, game) {
-  io.emit("INITIAL_CARDS", game.getSnapshot());
+  const payload = game.getSnapshot();
+  logEmit("INITIAL_CARDS", payload);
+  io.emit("INITIAL_CARDS", payload);
 }
 
 export function emitGameResultsIfReady(io, game) {
@@ -31,6 +52,7 @@ export function emitGameResultsIfReady(io, game) {
 
   Object.entries(GAME_RESULT_EVENTS).forEach(([status, eventName]) => {
     if (resultGame.some((player) => player.status === status)) {
+      logEmit(eventName, resultGame);
       io.emit(eventName, resultGame);
     }
   });
