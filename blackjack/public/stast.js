@@ -120,7 +120,7 @@ async function checkAuth() {
   const data = await safeJson(response);
 
   if (!response.ok || !data.id_joueur) {
-    window.location.href = "/home.html";
+    window.location.href = "/table.html";
     return null;
   }
 
@@ -162,7 +162,7 @@ async function logout() {
       credentials: "include",
     });
 
-    window.location.href = "/home.html";
+    window.location.href = "/table.html";
   } catch (error) {
     console.error("Erreur logout :", error);
   }

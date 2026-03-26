@@ -244,7 +244,6 @@ export function registerSocketHandlers({
   socket.on("LEAVE_GAME", (playerId) => {
     logOn("LEAVE_GAME", { playerId });
 
-    // On retire du lobby si encore présent
     removeLobbyPlayer(socket, io, lobbyPlayersBySocketId);
 
     const bySocket = playersBySocketId.get(socket.id);

@@ -1,8 +1,8 @@
-import io from 'socket.io-client';
-import { ClientEvents, ServerEvents } from './SocketEvents.js';
+import io from "socket.io-client";
+import { ClientEvents, ServerEvents } from "../constant/SocketEvents.js";
 
 class SocketManager {
-  constructor(url = 'http://localhost:3000') {
+  constructor(url = "http://localhost:3000") {
     this.socket = null;
     this.url = url;
     this.listeners = new Map();
@@ -18,16 +18,16 @@ class SocketManager {
         reconnectionAttempts: 5,
       });
 
-      this.socket.on('connect', () => {
+      this.socket.on("connect", () => {
         this.isConnected = true;
         resolve();
       });
 
-      this.socket.on('connect_error', (error) => {
+      this.socket.on("connect_error", (error) => {
         reject(error);
       });
 
-      this.socket.on('disconnect', () => {
+      this.socket.on("disconnect", () => {
         this.isConnected = false;
       });
     });

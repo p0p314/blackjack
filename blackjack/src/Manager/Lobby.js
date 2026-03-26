@@ -1,5 +1,5 @@
 import socketManager from "/src/socket/SocketManager.js";
-import { ClientEvents } from "/src/socket/SocketEvents.js";
+import { ClientEvents } from "/src/constant/SocketEvents.js";
 
 class LobbyManager {
   constructor() {
@@ -55,11 +55,11 @@ class LobbyManager {
         document.getElementById("userInfo").textContent =
           `Bienvenue, ${data.pseudo}`;
       } else {
-        window.location.href = "./home.html";
+        window.location.href = "./index.html";
       }
     } catch (error) {
       console.error("Erreur récupération utilisateur:", error);
-      window.location.href = "./home.html";
+      window.location.href = "./index.html";
     }
   }
 
@@ -97,7 +97,7 @@ class LobbyManager {
       const isHost = hostPlayerId === this.currentPlayer?.id_joueur;
 
       setTimeout(() => {
-        window.location.href = `./index.html?host=${isHost ? "1" : "0"}`;
+        window.location.href = `./table.html?host=${isHost ? "1" : "0"}`;
       }, 1200);
     });
 
@@ -149,7 +149,7 @@ class LobbyManager {
     if (this.currentPlayer) {
       socketManager.leaveLobby(this.currentPlayer.id_joueur);
     }
-    window.location.href = "./home.html";
+    window.location.href = "./index.html";
   }
 
   startGame() {

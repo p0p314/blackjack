@@ -1,4 +1,10 @@
-import { BACK_CARDS, CARDS, CHIPS, OUTLINED_CARDS, TABLE } from "../Assets.js";
+import {
+  BACK_CARDS,
+  CARDS,
+  CHIPS,
+  OUTLINED_CARDS,
+  TABLE,
+} from "../constant/Assets.js";
 
 const assets = {
   cards: {},

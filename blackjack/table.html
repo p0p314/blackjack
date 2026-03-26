@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <title>Blackjack - Table</title>
+</head>
+
+<body>
+  <!-- Bet Modal -->
+  <div class="bet-modal-overlay" id="betModalOverlay">
+    <div class="bet-modal" id="betModal">
+      <div class="player-name" id="playerName"></div>
+      <h2>Place Your Bet</h2>
+
+      <div class="bet-info">
+        <div class="bet-info-row">
+          <span class="bet-info-label">Your Money:</span>
+          <span class="bet-info-value" id="playerMoney">$1000</span>
+        </div>
+        <div class="bet-info-row">
+          <span class="bet-info-label">Current Bet:</span>
+          <span class="bet-info-value" id="currentBet">$0</span>
+        </div>
+      </div>
+
+      <div class="chips-container" id="chipsContainer">
+        <!-- Chips will be inserted here -->
+      </div>
+
+      <div class="modal-buttons">
+        <button class="btn-modal btn-clear" id="clearBetBtn">Clear Bet</button>
+        <button class="btn-modal btn-deal" id="dealBtn" disabled>Deal</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
