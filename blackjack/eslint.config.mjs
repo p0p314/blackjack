@@ -10,7 +10,9 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
     },
+    plugins: { prettier: prettierPlugin },
+    rules: {
+      "prettier/prettier": "warn",
+    },
   },
-  // Flat-config safe prettier integration
-  prettierPlugin.configs["flat/recommended"],
 ];
