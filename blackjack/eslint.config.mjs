@@ -1,5 +1,4 @@
 import js from "@eslint/js";
-import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
 
 export default [
@@ -12,6 +11,6 @@ export default [
       sourceType: "module",
     },
   },
-  prettierPlugin.configs.recommended,
-  prettierConfig,
+  // Flat-config safe prettier integration
+  prettierPlugin.configs["flat/recommended"],
 ];
