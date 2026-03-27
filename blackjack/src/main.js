@@ -4,7 +4,6 @@ import GameState from "./state/GameState.js";
 import { socket } from "./socket/Socket.js";
 import { fetchCurrentUser as fetchCurrentUserApi } from "./api/authApi.js";
 import { registerClientEvents } from "./socket/registerClientEvents.js";
-import globals from "globals";
 
 const CARD_WIDTH = 90;
 const CARD_HEIGHT = 135;
