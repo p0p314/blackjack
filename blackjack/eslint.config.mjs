@@ -18,6 +18,9 @@ export default [
         alert: "readonly",
         console: "readonly",
         URLSearchParams: "readonly",
+          fetch: "readonly", 
+        Chart: "readonly",
+        
       },
     },
     plugins: { prettier: prettierPlugin },
