@@ -10,17 +10,8 @@ export default [
       ecmaVersion: "latest",
       sourceType: "module",
       globals: {
-  window: "readonly",
-  document: "readonly",
-  setTimeout: "readonly",
-  requestAnimationFrame: "readonly",
-  alert: "readonly",
-  confirm: "readonly", // 👈 ajoute
-  Image: "readonly",   // 👈 ajoute
-  console: "readonly",
-  URLSearchParams: "readonly",
-  fetch: "readonly",
-},
+        ...globals.browser,
+      },
     },
     plugins: {
       prettier: prettierPlugin,
