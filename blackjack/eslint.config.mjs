@@ -17,6 +17,7 @@ export default [
         requestAnimationFrame: "readonly",
         alert: "readonly",
         console: "readonly",
+        URLSearchParams: "readonly",
       },
     },
     plugins: { prettier: prettierPlugin },
