@@ -9,6 +9,15 @@ export default [
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
+      // Browser runtime globals
+      globals: {
+        window: "readonly",
+        document: "readonly",
+        setTimeout: "readonly",
+        requestAnimationFrame: "readonly",
+        alert: "readonly",
+        console: "readonly",
+      },
     },
     plugins: { prettier: prettierPlugin },
     rules: {
