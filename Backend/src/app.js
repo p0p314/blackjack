@@ -11,25 +11,30 @@ import statsRouter from "./routes/stats.routes.js";
 
 const app = express();
 
+const normalizeOrigin = (origin) => origin.replace(/\/$/, "").toLowerCase();
+
 const parseOrigins = (rawOrigins = "") =>
   rawOrigins
     .split(",")
     .map((origin) => origin.trim())
-    .filter(Boolean);
+    .filter(Boolean)
+    .map(normalizeOrigin);
 
 const defaultOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
-];
+].map(normalizeOrigin);
 
 const allowedOrigins = parseOrigins(process.env.ALLOWED_ORIGINS);
 const corsAllowedOrigins = allowedOrigins.length
   ? allowedOrigins
   : defaultOrigins;
 
-const isOriginAllowed = (origin) =>
-  !origin || corsAllowedOrigins.includes(origin);
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  return corsAllowedOrigins.includes(normalizeOrigin(origin));
+};
 
 app.set("trust proxy", 1);
 
@@ -66,6 +71,8 @@ app.use(
 app.get("/", (req, res) => {
   res.status(200).json({
     message: "API Blackjack opérationnelle",
+    allowedOrigins: corsAllowedOrigins,
+    requestOrigin: req.headers.origin || null,
   });
 });
 
