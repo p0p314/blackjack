@@ -1,3 +1,5 @@
+/* global Chart */
+
 const getApiBaseUrl = () => {
   const fromGlobal = window.__API_BASE_URL__;
   if (typeof fromGlobal === "string" && fromGlobal.trim()) {
