@@ -1,12 +1,4 @@
-const getApiBaseUrl = () => {
-  const fromGlobal = window.__API_BASE_URL__;
-  if (typeof fromGlobal === "string" && fromGlobal.trim()) {
-    return fromGlobal.replace(/\/$/, "");
-  }
-  return "";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+const API_BASE_URL = (window.__API_BASE_URL__ || "").replace(/\/$/, "");
 
 const modal = document.getElementById("popupLogin");
 const authArea = document.getElementById("authArea");

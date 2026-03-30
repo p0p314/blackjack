@@ -1,16 +1,12 @@
 import io from "socket.io-client";
 import { ClientEvents, ServerEvents } from "../constant/SocketEvents.js";
 
-const inferSocketUrl = () => {
-  const fromEnv = import.meta.env.VITE_SOCKET_URL;
-  if (fromEnv && typeof fromEnv === "string") {
-    return fromEnv.replace(/\/$/, "");
-  }
-  return window.location.origin;
-};
+const SOCKET_URL =
+  (import.meta.env.VITE_SOCKET_URL || "").replace(/\/$/, "") ||
+  window.location.origin;
 
 class SocketManager {
-  constructor(url = inferSocketUrl()) {
+  constructor(url = SOCKET_URL) {
     this.socket = null;
     this.url = url;
     this.listeners = new Map();

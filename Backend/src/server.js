@@ -11,23 +11,19 @@ const PORT = process.env.PORT || 3000;
 
 const normalizeOrigin = (origin) => origin.replace(/\/$/, "").toLowerCase();
 
-const parseOrigins = (rawOrigins = "") =>
-  rawOrigins
-    .split(",")
-    .map((origin) => origin.trim())
-    .filter(Boolean)
-    .map(normalizeOrigin);
-
 const defaultOrigins = [
   "http://localhost:3000",
   "http://localhost:5173",
   "http://127.0.0.1:5173",
 ].map(normalizeOrigin);
 
-const allowedOrigins = parseOrigins(process.env.ALLOWED_ORIGINS);
-const corsAllowedOrigins = allowedOrigins.length
-  ? allowedOrigins
-  : defaultOrigins;
+const envOrigins = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean)
+  .map(normalizeOrigin);
+
+const corsAllowedOrigins = envOrigins.length ? envOrigins : defaultOrigins;
 
 const isOriginAllowed = (origin) => {
   if (!origin) return true;
@@ -41,12 +37,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin(origin, callback) {
-      if (isOriginAllowed(origin)) {
-        return callback(null, origin || corsAllowedOrigins[0] || "*");
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: corsAllowedOrigins,
     credentials: true,
   },
 });

@@ -1,14 +1,8 @@
 import { io } from "socket.io-client";
 
-const inferServerUrl = () => {
-  const fromEnv = import.meta.env.VITE_SOCKET_URL;
-  if (fromEnv && typeof fromEnv === "string") {
-    return fromEnv.replace(/\/$/, "");
-  }
-  return window.location.origin;
-};
-
-const SERVER_URL = inferServerUrl();
+const SERVER_URL =
+  (import.meta.env.VITE_SOCKET_URL || "").replace(/\/$/, "") ||
+  window.location.origin;
 
 class GameSocket {
   constructor() {
