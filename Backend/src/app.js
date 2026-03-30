@@ -31,11 +31,25 @@ const corsAllowedOrigins = allowedOrigins.length
   ? allowedOrigins
   : defaultOrigins;
 
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  const normalized = normalizeOrigin(origin);
+  if (corsAllowedOrigins.includes(normalized)) return true;
+  if (/\.vercel\.app$/.test(normalized)) return true;
+  if (/\.onrender\.com$/.test(normalized)) return true;
+  return false;
+};
+
 app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin: corsAllowedOrigins,
+    origin(origin, callback) {
+      if (isOriginAllowed(origin)) {
+        return callback(null, origin || corsAllowedOrigins[0] || "*");
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
     optionsSuccessStatus: 200,
   }),

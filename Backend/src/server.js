@@ -28,11 +28,25 @@ const allowedOrigins = parseOrigins(process.env.ALLOWED_ORIGINS);
 const corsAllowedOrigins = allowedOrigins.length
   ? allowedOrigins
   : defaultOrigins;
+
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  const normalized = normalizeOrigin(origin);
+  if (corsAllowedOrigins.includes(normalized)) return true;
+  if (/\.vercel\.app$/.test(normalized)) return true;
+  if (/\.onrender\.com$/.test(normalized)) return true;
+  return false;
+};
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: corsAllowedOrigins,
+    origin(origin, callback) {
+      if (isOriginAllowed(origin)) {
+        return callback(null, origin || corsAllowedOrigins[0] || "*");
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   },
 });
