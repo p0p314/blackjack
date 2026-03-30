@@ -3,7 +3,7 @@ const getApiBaseUrl = () => {
   if (typeof fromGlobal === "string" && fromGlobal.trim()) {
     return fromGlobal.replace(/\/$/, "");
   }
-  return ""; // same-origin by default
+  return "";
 };
 
 const API_BASE_URL = getApiBaseUrl();
