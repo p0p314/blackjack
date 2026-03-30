@@ -28,21 +28,11 @@ const allowedOrigins = parseOrigins(process.env.ALLOWED_ORIGINS);
 const corsAllowedOrigins = allowedOrigins.length
   ? allowedOrigins
   : defaultOrigins;
-const isOriginAllowed = (origin) => {
-  if (!origin) return true;
-  return corsAllowedOrigins.includes(normalizeOrigin(origin));
-};
-
 const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin(origin, callback) {
-      if (isOriginAllowed(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: corsAllowedOrigins,
     credentials: true,
   },
 });

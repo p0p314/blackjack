@@ -31,22 +31,13 @@ const corsAllowedOrigins = allowedOrigins.length
   ? allowedOrigins
   : defaultOrigins;
 
-const isOriginAllowed = (origin) => {
-  if (!origin) return true;
-  return corsAllowedOrigins.includes(normalizeOrigin(origin));
-};
-
 app.set("trust proxy", 1);
 
 app.use(
   cors({
-    origin(origin, callback) {
-      if (isOriginAllowed(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error("Not allowed by CORS"));
-    },
+    origin: corsAllowedOrigins,
     credentials: true,
+    optionsSuccessStatus: 200,
   }),
 );
 
