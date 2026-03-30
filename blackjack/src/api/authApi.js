@@ -1,4 +1,12 @@
-const API_BASE_URL = "http://localhost:3000";
+const getApiBaseUrl = () => {
+  const fromEnv = import.meta.env.VITE_API_URL;
+  if (fromEnv && typeof fromEnv === "string") {
+    return fromEnv.replace(/\/$/, "");
+  }
+  return ""; // same-origin fallback when front is served by the API or via proxy
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 function safeJson(response) {
   return response.text().then((text) => {

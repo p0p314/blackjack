@@ -44,7 +44,7 @@ class LobbyManager {
 
   async getCurrentUser() {
     try {
-      const response = await fetch("http://localhost:3000/api/auth/me", {
+      const response = await fetch(`${this.getApiBaseUrl()}/api/auth/me`, {
         credentials: "include",
       });
 
@@ -61,6 +61,14 @@ class LobbyManager {
       console.error("Erreur récupération utilisateur:", error);
       window.location.href = "./index.html";
     }
+  }
+
+  getApiBaseUrl() {
+    const fromEnv = import.meta.env.VITE_API_URL;
+    if (fromEnv && typeof fromEnv === "string") {
+      return fromEnv.replace(/\/$/, "");
+    }
+    return "";
   }
 
   setupSocketListeners() {

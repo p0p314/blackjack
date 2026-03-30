@@ -1,8 +1,16 @@
 import io from "socket.io-client";
 import { ClientEvents, ServerEvents } from "../constant/SocketEvents.js";
 
+const inferSocketUrl = () => {
+  const fromEnv = import.meta.env.VITE_SOCKET_URL;
+  if (fromEnv && typeof fromEnv === "string") {
+    return fromEnv.replace(/\/$/, "");
+  }
+  return window.location.origin;
+};
+
 class SocketManager {
-  constructor(url = "http://localhost:3000") {
+  constructor(url = inferSocketUrl()) {
     this.socket = null;
     this.url = url;
     this.listeners = new Map();
@@ -16,6 +24,8 @@ class SocketManager {
         reconnectionDelay: 1000,
         reconnectionDelayMax: 5000,
         reconnectionAttempts: 5,
+        withCredentials: true,
+        transports: ["websocket"],
       });
 
       this.socket.on("connect", () => {

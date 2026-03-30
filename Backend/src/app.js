@@ -11,15 +11,44 @@ import statsRouter from "./routes/stats.routes.js";
 
 const app = express();
 
+const parseOrigins = (rawOrigins = "") =>
+  rawOrigins
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+const defaultOrigins = [
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+];
+
+const allowedOrigins = parseOrigins(process.env.ALLOWED_ORIGINS);
+const corsAllowedOrigins = allowedOrigins.length
+  ? allowedOrigins
+  : defaultOrigins;
+
+const isOriginAllowed = (origin) =>
+  !origin || corsAllowedOrigins.includes(origin);
+
+app.set("trust proxy", 1);
+
 app.use(
   cors({
-    origin: true,
+    origin(origin, callback) {
+      if (isOriginAllowed(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const isProduction = process.env.NODE_ENV === "production";
 
 app.use(
   session({
@@ -28,8 +57,8 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      sameSite: "lax",
-      secure: false,
+      sameSite: isProduction ? "none" : "lax",
+      secure: isProduction,
     },
   }),
 );
